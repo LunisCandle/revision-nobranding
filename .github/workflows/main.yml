@@ -38,7 +38,7 @@ jobs:
 
       - name: Fetch latest RevisionTool-Setup.exe (bundled fallback)
         run: |
-          $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/meetrevision/revision-tool/releases/latest'
+          $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/LunisCandle/revision-tool-nobranding/releases/latest'
           $version = $release.tag_name
           $asset = $release.assets | Where-Object { $_.name -eq 'RevisionTool-Setup.exe' } | Select-Object -First 1
           if (-not $asset) { throw 'RevisionTool-Setup.exe asset not found in latest revision-tool release' }
@@ -74,12 +74,8 @@ jobs:
           release_name: ${{ env.VERSION }}
           prerelease: false # Always set to false
           body: |
-            # Download Link ✨
-
-            If you would like to support Revision, kindly download the Playbook from the provided link below.
-
-            📌Link: 
+            # Download ✨
 
             SHA256: `${{ env.HASH }}`
 
-            Bundled Revision Tool version: [${{ env.REVISION_TOOL_VERSION }}](https://github.com/meetrevision/revision-tool/releases/tag/${{ env.REVISION_TOOL_VERSION }}) (SHA256: `${{ env.REVISION_TOOL_SHA256 }}`)
+            Bundled Revision Tool version: [${{ env.REVISION_TOOL_VERSION }}](https://github.com/LunisCandle/revision-tool-nobranding/releases/tag/${{ env.REVISION_TOOL_VERSION }}) (SHA256: `${{ env.REVISION_TOOL_SHA256 }}`)
