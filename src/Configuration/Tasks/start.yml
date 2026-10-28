@@ -28,34 +28,6 @@ actions:
   - !cmd:
     command: 'ipconfig /flushdns'
 
-  # Wakelock modification isn't available in AME Wizard, therefore activating a custom high performance powerplan before we proceed to prevent sleep 
-  - !writeStatus: {status: "Configuring a power plan"}
-  # https://github.com/meetrevision/playbook/issues/105
-  # - !run: {exe: "powercfg", args: "-restoredefaultschemes"}
-  # Delete existing Revision power plan if it exists
-  - !powerShell:
-    command: |
-      $scheme = powercfg -getactivescheme
-      if ($scheme -like '*3ff9831b-6f80-4830-8178-736cd4229e7b*') {
-        powercfg -s 381b4222-f694-41f0-9685-ff5bb260df2e
-        if ($LASTEXITCODE -ne 0) {
-        powercfg -restoreindividualdefaultscheme 381b4222-f694-41f0-9685-ff5bb260df2e
-        }
-        powercfg -s 381b4222-f694-41f0-9685-ff5bb260df2e
-      }
-      powercfg -delete 3ff9831b-6f80-4830-8178-736cd4229e7b
-
-  - !run: {exe: "powercfg", args: "-duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 3ff9831b-6f80-4830-8178-736cd4229e7b"}
-  - !run: {exe: "powercfg", args: "-changename 3ff9831b-6f80-4830-8178-736cd4229e7b \"Revision - Ultra Performance\" \"Windows's Ultimate Performance with additional changes.\""}
-  - !run: {exe: "powercfg", args: "-s 3ff9831b-6f80-4830-8178-736cd4229e7b"}
-  - !run: {exe: "powercfg", args: "-setacvalueindex scheme_current sub_processor PERFINCPOL 2"}
-  - !run: {exe: "powercfg", args: "-setacvalueindex scheme_current sub_processor PERFDECPOL 1"}
-  - !run: {exe: "powercfg", args: "-setacvalueindex scheme_current sub_processor PERFINCTHRESHOLD 10"}
-  - !run: {exe: "powercfg", args: "-setacvalueindex scheme_current sub_processor PERFDECTHRESHOLD 8"}
-  - !run: {exe: "powercfg", args: "-setacvalueindex scheme_current sub_processor CPMINCORES 100"}
-  - !run: {exe: "powercfg", args: "-setacvalueindex scheme_current sub_processor CPMINCORES1 100"} # on hybrid CPUs, '1' at the end of the setting name is for P-cores
-  - !run: {exe: "powercfg", args: "/setactive scheme_current"}
-
   - !writeStatus: {status: "Installing VCRedist"}
   - !download: 
     url: 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
@@ -69,13 +41,23 @@ actions:
   - !writeStatus: {status: 'Installing Revision Tool'}
   - !download: 
     url: 'https://github.com/meetrevision/revision-tool/releases/latest/download/RevisionTool-Setup.exe'
-    destination: "RevisionTool-Setup.exe"
+    destination: "RevisionTool-Setup-Latest.exe"
     overwrite: true
-  - !run:
+    errorAction: Log
+  - !powerShell:
     exeDir: true
-    exe: "RevisionTool-Setup.exe"
-    args: '/VERYSILENT /TASKS="desktopicon"'
-    weight: 150
+    wait: true
+    errorAction: Halt
+    weight: 50
+    command: >-
+      $installer = if (Test-Path -LiteralPath '.\RevisionTool-Setup-Latest.exe') {
+        '.\RevisionTool-Setup-Latest.exe'
+      } elseif (Test-Path -LiteralPath '.\RevisionTool-Setup.exe') {
+        '.\RevisionTool-Setup.exe'
+      } else {
+        throw 'No Revision Tool installer was found.'
+      };
+      Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /TASKS="desktopicon"' -Wait -WindowStyle Hidden
 
   - !writeStatus: {status: "Optimizing PowerShell"}
   - !run:
@@ -83,3 +65,11 @@ actions:
     exe: "PowerShell"
     args: '-NoP -ExecutionPolicy Bypass -File ngen.ps1'
     weight: 100
+
+  - !writeStatus: {status: "Configuring a power plan"}
+  - !run:
+    path: "%ProgramFiles%\\Revision Tool"
+    exe: "revitool.exe"
+    args: "tweaks performance powerplan enable"
+    wait: true
+    runas: currentUserElevated

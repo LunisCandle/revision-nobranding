@@ -1,6 +1,6 @@
 <h1 align="center">
 
-ReviOS Playbook📜 (No Branding)
+ReviOS Playbook📜
 
 ---
 
@@ -24,11 +24,6 @@ ReviOS is a customized version of Windows, designed to be lightweight, stable, a
 
 This is a modified version of the ReviOS Playbook to remove some of the leftover branding elements embedded in your system, if there are any issues caused by doing so, do *NOT* report them to the Revision team, instead open an issue on this repository, and we'll see what can be done!
 
-## 🤝 Support
-
-If you have any issues not correlating to the branding removals, feel free to reach out to their team on [discord!](https://discord.gg/962y4pU)
-
-
 ## ✨ Key Features
 
 - 🎯 Easy to use, just drag and drop the playbook into [AME Wizard](https://amelabs.net)
@@ -47,6 +42,8 @@ ReviOS Playbook currently supports ARM64 and AMD64 builds of the following Windo
 - Windows 11 23H2 `22631`
 - Windows 11 24H2 `26100` (+ LTSC)
 - Windows 11 25H2 `26200`
+- Windows 11 26H1 `28000`
+- Windows 11 26H2 `26300`
 
 Any other build **is not** supported by Revision.
 
@@ -76,3 +73,12 @@ Explore our documentation for more information:
 [![License](https://img.shields.io/static/v1?label=LICENSE&message=CC%20BY-SA&logo=creativecommons)](https://creativecommons.org/licenses/by-sa/4.0/)
 
 ReviOS Playbook is licensed under [Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/).
+
+## 🤝 Support
+
+If you have any issues not correlating to the branding removals, feel free to reach out to their team on [discord!](https://discord.gg/962y4pU)
+
+> [!NOTE]
+> Revision itself (and its Discord server) is not tech support in any shape or form.
+
+The best way to contact us is through our [Discord server](https://discord.gg/962y4pU).
